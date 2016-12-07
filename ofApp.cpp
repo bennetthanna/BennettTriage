@@ -6,18 +6,25 @@
 #include <algorithm>
 
 Doctor dan;
+Doctor don;
 
 std::priority_queue<Patient> WaitingList;
 std::vector<Patient> patients;
+std::vector<Doctor> doctors;
 
 int numDead = 0;
 int numHealed = 0;
 
 Patient topPatient;
+Patient newTopPatient;
+Patient oldPatient;
 
 void ofApp::setup(){
     ofBackground(255);
     dan = Doctor(ofGetWidth() - 200, 100, "Dan");
+    don = Doctor(ofGetWidth() - 500, 100, "Don");
+    doctors.push_back(dan);
+    doctors.push_back(don);
 }
 
 void ofApp::update(){
@@ -27,24 +34,24 @@ void ofApp::update(){
     //            patientEntersER();
     //        }
     //    }
-        dan.treatPatient();
-    
-    
-        if (!dan.isIdle()) {
-            dan.currentPatient->update();
-            if (dan.currentPatient->lifeLeft == 0) {
-                numDead += 1;
-                dan.currentPatient = NULL;
-            }
-        }
-    
-        if(!dan.isIdle()) {
-            if (dan.currentPatient->treatementTimeNeeded == 0) {
-                numHealed += 1;
-                dan.currentPatient = NULL;
-            }
-        }
-    
+    //    dan.treatPatient();
+    //
+    //
+    //    if (!dan.isIdle()) {
+    //        dan.currentPatient->update();
+    //        if (dan.currentPatient->lifeLeft == 0) {
+    //            numDead += 1;
+    //            dan.currentPatient = NULL;
+    //        }
+    //    }
+    //
+    //    if(!dan.isIdle()) {
+    //        if (dan.currentPatient->treatementTimeNeeded == 0) {
+    //            numHealed += 1;
+    //            dan.currentPatient = NULL;
+    //        }
+    //    }
+    //
     updateQueue();
     triage();
 }
@@ -73,7 +80,7 @@ void ofApp::draw(){
     ofDrawBitmapString("Number of Patients that Were Healed: " + std::to_string(numHealed), 10, 20);
     
     dan.draw();
-
+    don.draw();
     int waitingRoomX = ofGetWidth() - 100;
     int waitingRoomY = ofGetHeight() - 100;
     
@@ -83,12 +90,15 @@ void ofApp::draw(){
             waitingRoomX -= 100;
         }
     }
-
-    if(dan.isIdle()) {
-        ofDrawBitmapString("AVAILABLE", dan.x, dan.y);
-    } else {
-        dan.currentPatient->draw(dan.x + 50, dan.y + 100);
-    }
+//    
+//    for (Doctor d : doctors) {
+//        if (d.isIdle()) {
+//            ofDrawBitmapString("AVAILABLE", d.x, d.y);
+//        } else {
+//            ofDrawBitmapString("NOT AVAILABLE", d.x, d.y);
+//            d.currentPatient->draw(d.x + 50, d.y + 100);
+//        }
+//    }
 }
 
 void ofApp::patientEntersER() {
@@ -102,16 +112,31 @@ void ofApp::triage() {
             topPatient = WaitingList.top();
             dan.attendTo(&topPatient);
             WaitingList.pop();
-        } else {
-            Patient p = WaitingList.top();
-            if (*dan.currentPatient < p) {
-                WaitingList.push(*dan.currentPatient);
-                topPatient = p;
-                dan.attendTo(&topPatient);
-                WaitingList.pop();
+            if (WaitingList.empty()) {
+                ofLog(OF_LOG_NOTICE, "Waiting list is empty");
             }
         }
     }
+    
+    if (!WaitingList.empty()) {
+        if (don.isIdle()) {
+            newTopPatient = WaitingList.top();
+            don.attendTo(&newTopPatient);
+            WaitingList.pop();
+            if (WaitingList.empty()) {
+                ofLog(OF_LOG_NOTICE, "Waiting list is empty");
+            }
+        }
+    }
+//    if (!dan.isIdle()) {
+//        Patient p = WaitingList.top();
+//        if (*dan.currentPatient < p) {
+//            WaitingList.push(*dan.currentPatient);
+//            topPatient = p;
+//            dan.attendTo(&topPatient);
+//            WaitingList.pop();
+//        }
+//    }
 }
 
 
