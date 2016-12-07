@@ -5,20 +5,21 @@
 #include <vector>
 #include <algorithm>
 
-Doctor dan;
-Doctor don;
-Doctor dee;
-
-std::priority_queue<Patient> WaitingList;
+std::priority_queue<Patient> waitingList;
 std::vector<Patient> patients;
 std::vector<Doctor> doctors;
 
 int numDead = 0;
 int numHealed = 0;
 
+Doctor dan;
+Doctor don;
+Doctor dee;
+
 Patient danTopPatient;
 Patient donTopPatient;
 Patient deeTopPatient;
+
 Patient danFirstPatient;
 Patient donFirstPatient;
 Patient deeFirstPatient;
@@ -96,24 +97,23 @@ void ofApp::update(){
 
 void ofApp::updateQueue() {
     patients.clear();
-    while (!WaitingList.empty()) {
-        Patient p = WaitingList.top();
+    while (!waitingList.empty()) {
+        Patient p = waitingList.top();
         p.update();
         if (p.lifeLeft == 0) {
             numDead += 1;
-            WaitingList.pop();
+            waitingList.pop();
         } else{
             patients.push_back(p);
-            WaitingList.pop();
+            waitingList.pop();
         }
     }
     for (int i = 0; i < patients.size(); ++i) {
-        WaitingList.push(patients.at(i));
+        waitingList.push(patients.at(i));
     }
 }
 
 void ofApp::draw(){
-    
     ofDrawBitmapString("Number of Patients that Died: " + std::to_string(numDead), 10, 10);
     ofDrawBitmapString("Number of Patients that Were Healed: " + std::to_string(numHealed), 10, 20);
     
@@ -152,123 +152,68 @@ void ofApp::draw(){
 
 void ofApp::patientEntersER() {
     Patient *newPatient = new Patient();
-    WaitingList.push(*newPatient);
+    waitingList.push(*newPatient);
 }
 
 void ofApp::triage() {
-    if (!WaitingList.empty()) {
+    if (!waitingList.empty()) {
         if (dan.isIdle()) {
-            danTopPatient = WaitingList.top();
+            danTopPatient = waitingList.top();
             dan.attendTo(&danTopPatient);
-            WaitingList.pop();
+            waitingList.pop();
         }
     }
     
-    if (!WaitingList.empty()) {
+    if (!waitingList.empty()) {
         if (don.isIdle()) {
-            donTopPatient = WaitingList.top();
+            donTopPatient = waitingList.top();
             don.attendTo(&donTopPatient);
-            WaitingList.pop();
+            waitingList.pop();
         }
     }
     
-    if (!WaitingList.empty()) {
+    if (!waitingList.empty()) {
         if (dee.isIdle()) {
-            deeTopPatient = WaitingList.top();
+            deeTopPatient = waitingList.top();
             dee.attendTo(&deeTopPatient);
-            WaitingList.pop();
+            waitingList.pop();
         }
     }
     
-    if (!WaitingList.empty()) {
+    if (!waitingList.empty()) {
         if (!dan.isIdle()) {
-            Patient p1 = WaitingList.top();
+            Patient p1 = waitingList.top();
             if (*dan.currentPatient < p1) {
-                WaitingList.push(*dan.currentPatient);
+                waitingList.push(*dan.currentPatient);
                 danFirstPatient = p1;
                 dan.attendTo(&danFirstPatient);
-                WaitingList.pop();
+                waitingList.pop();
             }
         }
     }
     
-    if (!WaitingList.empty()) {
+    if (!waitingList.empty()) {
         if (!don.isIdle()) {
-            Patient p2 = WaitingList.top();
+            Patient p2 = waitingList.top();
             if (*don.currentPatient < p2) {
-                WaitingList.push(*don.currentPatient);
+                waitingList.push(*don.currentPatient);
                 donFirstPatient = p2;
                 don.attendTo(&donFirstPatient);
-                WaitingList.pop();
+                waitingList.pop();
             }
         }
     }
     
-    if (!WaitingList.empty()) {
+    if (!waitingList.empty()) {
         if (!dee.isIdle()) {
-            Patient p3 = WaitingList.top();
+            Patient p3 = waitingList.top();
             if (*dee.currentPatient < p3) {
-                WaitingList.push(*dee.currentPatient);
+                waitingList.push(*dee.currentPatient);
                 deeFirstPatient = p3;
                 dee.attendTo(&deeFirstPatient);
-                WaitingList.pop();
+                waitingList.pop();
             }
         }
     }
 }
 
-
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-//    if (key == ' ') patientEntersER();
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-    
-}
