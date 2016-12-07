@@ -24,7 +24,5 @@ class ofApp : public ofBaseApp{
         void triage();
         void updateQueue();
         void patientEntersER();
-        void compareDan();
-        void compareDon();
             
 };

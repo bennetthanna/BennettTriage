@@ -7,6 +7,7 @@
 
 Doctor dan;
 Doctor don;
+Doctor dee;
 
 std::priority_queue<Patient> WaitingList;
 std::vector<Patient> patients;
@@ -15,45 +16,80 @@ std::vector<Doctor> doctors;
 int numDead = 0;
 int numHealed = 0;
 
-Patient topPatient;
-Patient newTopPatient;
-Patient oldPatient;
-Patient firstPatient;
-Patient newfirstPatient;
+Patient danTopPatient;
+Patient donTopPatient;
+Patient deeTopPatient;
+Patient danFirstPatient;
+Patient donFirstPatient;
+Patient deeFirstPatient;
 
 void ofApp::setup(){
     ofBackground(255);
     dan = Doctor(ofGetWidth() - 200, 100, "Dan");
     don = Doctor(ofGetWidth() - 500, 100, "Don");
+    dee = Doctor(ofGetWidth() - 800, 100, "Dee");
     doctors.push_back(dan);
     doctors.push_back(don);
+    doctors.push_back(dee);
 }
 
 void ofApp::update(){
-    //    if (ofGetFrameNum() % 300 == 0) {
-    //        float probability = ofRandom(1.0);
-    //        if (probability < 0.5) {
-    //            patientEntersER();
-    //        }
-    //    }
-    //    dan.treatPatient();
-    //
-    //
-    //    if (!dan.isIdle()) {
-    //        dan.currentPatient->update();
-    //        if (dan.currentPatient->lifeLeft == 0) {
-    //            numDead += 1;
-    //            dan.currentPatient = NULL;
-    //        }
-    //    }
-    //
-    //    if(!dan.isIdle()) {
-    //        if (dan.currentPatient->treatementTimeNeeded == 0) {
-    //            numHealed += 1;
-    //            dan.currentPatient = NULL;
-    //        }
-    //    }
-    //
+    if (ofGetFrameNum() % 300 == 0) {
+        float probability = ofRandom(1.0);
+        if (probability < 0.5) {
+            patientEntersER();
+        }
+    }
+    
+    dan.treatPatient();
+    don.treatPatient();
+    dee.treatPatient();
+
+    if (!dan.isIdle()) {
+        dan.currentPatient->update();
+        if (dan.currentPatient->lifeLeft == 0) {
+            numDead += 1;
+            dan.currentPatient = NULL;
+        }
+    }
+
+    if(!dan.isIdle()) {
+        if (dan.currentPatient->treatementTimeNeeded == 0) {
+            numHealed += 1;
+            dan.currentPatient = NULL;
+        }
+    }
+
+    if (!don.isIdle()) {
+        don.currentPatient->update();
+        if (don.currentPatient->lifeLeft == 0) {
+            numDead += 1;
+            don.currentPatient = NULL;
+        }
+    }
+    
+    if(!don.isIdle()) {
+        if (don.currentPatient->treatementTimeNeeded == 0) {
+            numHealed += 1;
+            don.currentPatient = NULL;
+        }
+    }
+    
+    if (!dee.isIdle()) {
+        dee.currentPatient->update();
+        if (dee.currentPatient->lifeLeft == 0) {
+            numDead += 1;
+            dee.currentPatient = NULL;
+        }
+    }
+    
+    if(!dee.isIdle()) {
+        if (dee.currentPatient->treatementTimeNeeded == 0) {
+            numHealed += 1;
+            dee.currentPatient = NULL;
+        }
+    }
+    
     updateQueue();
     triage();
 }
@@ -83,6 +119,8 @@ void ofApp::draw(){
     
     dan.draw();
     don.draw();
+    dee.draw();
+    
     int waitingRoomX = ofGetWidth() - 100;
     int waitingRoomY = ofGetHeight() - 100;
     
@@ -93,24 +131,22 @@ void ofApp::draw(){
         }
     }
     
-//    for (Doctor d : doctors) {
-//        if (d.isIdle()) {
-//            ofDrawBitmapString("AVAILABLE", d.x, d.y);
-//        } else {
-//            d.currentPatient->draw(d.x + 50, d.y + 100);
-//        }
-//    }
-    
     if (dan.isIdle()) {
         ofDrawBitmapString("AVAILABLE", dan.x, dan.y);
     } else {
-        dan.currentPatient->draw(dan.x, dan.y);
+        dan.currentPatient->draw(dan.x + 50, dan.y + 100);
     }
     
     if (don.isIdle()) {
         ofDrawBitmapString("AVAILABLE", don.x, don.y);
     } else {
-        don.currentPatient->draw(don.x, don.y);
+        don.currentPatient->draw(don.x + 50, don.y + 100);
+    }
+    
+    if (dee.isIdle()) {
+        ofDrawBitmapString("AVAILABLE", dee.x, dee.y);
+    } else {
+        dee.currentPatient->draw(dee.x + 50, dee.y + 100);
     }
 }
 
@@ -122,42 +158,61 @@ void ofApp::patientEntersER() {
 void ofApp::triage() {
     if (!WaitingList.empty()) {
         if (dan.isIdle()) {
-            topPatient = WaitingList.top();
-            dan.attendTo(&topPatient);
+            danTopPatient = WaitingList.top();
+            dan.attendTo(&danTopPatient);
             WaitingList.pop();
-            if (WaitingList.empty()) {
-                ofLog(OF_LOG_NOTICE, "Waiting list is empty");
-            }
         }
     }
     
     if (!WaitingList.empty()) {
         if (don.isIdle()) {
-            newTopPatient = WaitingList.top();
-            don.attendTo(&newTopPatient);
+            donTopPatient = WaitingList.top();
+            don.attendTo(&donTopPatient);
             WaitingList.pop();
-            if (WaitingList.empty()) {
-                ofLog(OF_LOG_NOTICE, "Waiting list is empty");
+        }
+    }
+    
+    if (!WaitingList.empty()) {
+        if (dee.isIdle()) {
+            deeTopPatient = WaitingList.top();
+            dee.attendTo(&deeTopPatient);
+            WaitingList.pop();
+        }
+    }
+    
+    if (!WaitingList.empty()) {
+        if (!dan.isIdle()) {
+            Patient p1 = WaitingList.top();
+            if (*dan.currentPatient < p1) {
+                WaitingList.push(*dan.currentPatient);
+                danFirstPatient = p1;
+                dan.attendTo(&danFirstPatient);
+                WaitingList.pop();
             }
         }
     }
     
-    if (!dan.isIdle()) {
-        Patient p1 = WaitingList.top();
-        if (*dan.currentPatient < p1) {
-            WaitingList.push(*dan.currentPatient);
-            firstPatient = p1;
-            dan.attendTo(&firstPatient);
-            WaitingList.pop();
+    if (!WaitingList.empty()) {
+        if (!don.isIdle()) {
+            Patient p2 = WaitingList.top();
+            if (*don.currentPatient < p2) {
+                WaitingList.push(*don.currentPatient);
+                donFirstPatient = p2;
+                don.attendTo(&donFirstPatient);
+                WaitingList.pop();
+            }
         }
     }
-    if (!don.isIdle()) {
-        Patient p2 = WaitingList.top();
-        if (*don.currentPatient < p2) {
-            WaitingList.push(*don.currentPatient);
-            newfirstPatient = p2;
-            don.attendTo(&newfirstPatient);
-            WaitingList.pop();
+    
+    if (!WaitingList.empty()) {
+        if (!dee.isIdle()) {
+            Patient p3 = WaitingList.top();
+            if (*dee.currentPatient < p3) {
+                WaitingList.push(*dee.currentPatient);
+                deeFirstPatient = p3;
+                dee.attendTo(&deeFirstPatient);
+                WaitingList.pop();
+            }
         }
     }
 }
@@ -165,7 +220,7 @@ void ofApp::triage() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key == ' ') patientEntersER();
+//    if (key == ' ') patientEntersER();
 }
 
 //--------------------------------------------------------------
