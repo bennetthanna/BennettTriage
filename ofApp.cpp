@@ -90,15 +90,26 @@ void ofApp::draw(){
             waitingRoomX -= 100;
         }
     }
-//    
+    
 //    for (Doctor d : doctors) {
 //        if (d.isIdle()) {
 //            ofDrawBitmapString("AVAILABLE", d.x, d.y);
 //        } else {
-//            ofDrawBitmapString("NOT AVAILABLE", d.x, d.y);
 //            d.currentPatient->draw(d.x + 50, d.y + 100);
 //        }
 //    }
+    
+    if (dan.isIdle()) {
+        ofDrawBitmapString("AVAILABLE", dan.x, dan.y);
+    } else {
+        dan.currentPatient->draw(dan.x, dan.y);
+    }
+    
+    if (don.isIdle()) {
+        ofDrawBitmapString("AVAILABLE", don.x, don.y);
+    } else {
+        don.currentPatient->draw(don.x, don.y);
+    }
 }
 
 void ofApp::patientEntersER() {
@@ -128,15 +139,15 @@ void ofApp::triage() {
             }
         }
     }
-//    if (!dan.isIdle()) {
-//        Patient p = WaitingList.top();
-//        if (*dan.currentPatient < p) {
-//            WaitingList.push(*dan.currentPatient);
-//            topPatient = p;
-//            dan.attendTo(&topPatient);
-//            WaitingList.pop();
-//        }
-//    }
+    if (!dan.isIdle()) {
+        Patient p = WaitingList.top();
+        if (*dan.currentPatient < p) {
+            WaitingList.push(*dan.currentPatient);
+            topPatient = p;
+            dan.attendTo(&topPatient);
+            WaitingList.pop();
+        }
+    }
 }
 
 
