@@ -18,6 +18,8 @@ int numHealed = 0;
 Patient topPatient;
 Patient newTopPatient;
 Patient oldPatient;
+Patient firstPatient;
+Patient newfirstPatient;
 
 void ofApp::setup(){
     ofBackground(255);
@@ -139,12 +141,22 @@ void ofApp::triage() {
             }
         }
     }
+    
     if (!dan.isIdle()) {
-        Patient p = WaitingList.top();
-        if (*dan.currentPatient < p) {
+        Patient p1 = WaitingList.top();
+        if (*dan.currentPatient < p1) {
             WaitingList.push(*dan.currentPatient);
-            topPatient = p;
-            dan.attendTo(&topPatient);
+            firstPatient = p1;
+            dan.attendTo(&firstPatient);
+            WaitingList.pop();
+        }
+    }
+    if (!don.isIdle()) {
+        Patient p2 = WaitingList.top();
+        if (*don.currentPatient < p2) {
+            WaitingList.push(*don.currentPatient);
+            newfirstPatient = p2;
+            don.attendTo(&newfirstPatient);
             WaitingList.pop();
         }
     }
