@@ -8,19 +8,14 @@ Patient::Patient() {
     radius = 50.0;
     color = ofColor(ofRandom(255), ofRandom(255), ofRandom(255));
     severity = ofRandom(1, 100);
-    if (severity > 50) {
-        treatementTimeNeeded = ofRandom(1000, 15000);
-        lifeLeft = ofRandom(500, 10000);
-    } else {
-        treatementTimeNeeded = ofRandom(100, 7000);
-        lifeLeft = ofRandom(1000, 20000);
-    }
+    treatementTimeNeeded = ofRandom(300, 15000);
+    lifeLeft = ofRandom(treatementTimeNeeded, 20000);
     treatementTimeReceived = 0;
     initialLifeLeft = lifeLeft;
 }
 
 bool Patient::operator < (const Patient right) const {
-    return this->severity < right.severity;
+    return (float(this->treatementTimeNeeded) / float(this->lifeLeft)) < (float(right.treatementTimeNeeded) / float(right.lifeLeft));
 }
 
 void Patient::draw(int x, int y) {

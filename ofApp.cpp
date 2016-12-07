@@ -7,7 +7,6 @@
 
 std::priority_queue<Patient> waitingList;
 std::vector<Patient> patients;
-std::vector<Doctor> doctors;
 
 int numDead = 0;
 int numHealed = 0;
@@ -29,9 +28,6 @@ void ofApp::setup(){
     dan = Doctor(ofGetWidth() - 200, 100, "Dan");
     don = Doctor(ofGetWidth() - 500, 100, "Don");
     dee = Doctor(ofGetWidth() - 800, 100, "Dee");
-    doctors.push_back(dan);
-    doctors.push_back(don);
-    doctors.push_back(dee);
 }
 
 void ofApp::update(){
